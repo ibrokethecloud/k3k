@@ -2990,6 +2990,11 @@ spec:
                         default: true
                         description: Enabled is an on/off switch for syncing resources.
                         type: boolean
+                      filterRule:
+                        description: |-
+                          filterRule specifies a labelSelector that is used in combination with Selector
+                          to allow advanced filtering of objects being synced to host cluster
+                        type: string
                       selector:
                         additionalProperties:
                           type: string
@@ -3015,6 +3020,11 @@ spec:
                         default: false
                         description: Enabled is an on/off switch for syncing resources.
                         type: boolean
+                      filterRule:
+                        description: |-
+                          filterRule specifies a labelSelector that is used in combination with Selector
+                          to allow advanced filtering of objects being synced to host cluster
+                        type: string
                       selector:
                         additionalProperties:
                           type: string
@@ -3034,6 +3044,11 @@ spec:
                         default: true
                         description: Enabled is an on/off switch for syncing resources.
                         type: boolean
+                      filterRule:
+                        description: |-
+                          filterRule specifies a labelSelector that is used in combination with Selector
+                          to allow advanced filtering of objects being synced to host cluster
+                        type: string
                       selector:
                         additionalProperties:
                           type: string
@@ -3053,6 +3068,11 @@ spec:
                         default: false
                         description: Enabled is an on/off switch for syncing resources.
                         type: boolean
+                      filterRule:
+                        description: |-
+                          filterRule specifies a labelSelector that is used in combination with Selector
+                          to allow advanced filtering of objects being synced to host cluster
+                        type: string
                       selector:
                         additionalProperties:
                           type: string
@@ -3072,6 +3092,11 @@ spec:
                         default: true
                         description: Enabled is an on/off switch for syncing resources.
                         type: boolean
+                      filterRule:
+                        description: |-
+                          filterRule specifies a labelSelector that is used in combination with Selector
+                          to allow advanced filtering of objects being synced to host cluster
+                        type: string
                       selector:
                         additionalProperties:
                           type: string
@@ -3089,6 +3114,11 @@ spec:
                         default: true
                         description: Enabled is an on/off switch for syncing resources.
                         type: boolean
+                      filterRule:
+                        description: |-
+                          filterRule specifies a labelSelector that is used in combination with Selector
+                          to allow advanced filtering of objects being synced to host cluster
+                        type: string
                       selector:
                         additionalProperties:
                           type: string
@@ -3108,6 +3138,11 @@ spec:
                         default: false
                         description: Enabled is an on/off switch for syncing resources.
                         type: boolean
+                      filterRule:
+                        description: |-
+                          filterRule specifies a labelSelector that is used in combination with Selector
+                          to allow advanced filtering of objects being synced to host cluster
+                        type: string
                       selector:
                         additionalProperties:
                           type: string
@@ -5501,6 +5536,11 @@ spec:
                             default: true
                             description: Enabled is an on/off switch for syncing resources.
                             type: boolean
+                          filterRule:
+                            description: |-
+                              filterRule specifies a labelSelector that is used in combination with Selector
+                              to allow advanced filtering of objects being synced to host cluster
+                            type: string
                           selector:
                             additionalProperties:
                               type: string
@@ -5526,6 +5566,11 @@ spec:
                             default: false
                             description: Enabled is an on/off switch for syncing resources.
                             type: boolean
+                          filterRule:
+                            description: |-
+                              filterRule specifies a labelSelector that is used in combination with Selector
+                              to allow advanced filtering of objects being synced to host cluster
+                            type: string
                           selector:
                             additionalProperties:
                               type: string
@@ -5545,6 +5590,11 @@ spec:
                             default: true
                             description: Enabled is an on/off switch for syncing resources.
                             type: boolean
+                          filterRule:
+                            description: |-
+                              filterRule specifies a labelSelector that is used in combination with Selector
+                              to allow advanced filtering of objects being synced to host cluster
+                            type: string
                           selector:
                             additionalProperties:
                               type: string
@@ -5564,6 +5614,11 @@ spec:
                             default: false
                             description: Enabled is an on/off switch for syncing resources.
                             type: boolean
+                          filterRule:
+                            description: |-
+                              filterRule specifies a labelSelector that is used in combination with Selector
+                              to allow advanced filtering of objects being synced to host cluster
+                            type: string
                           selector:
                             additionalProperties:
                               type: string
@@ -5583,6 +5638,11 @@ spec:
                             default: true
                             description: Enabled is an on/off switch for syncing resources.
                             type: boolean
+                          filterRule:
+                            description: |-
+                              filterRule specifies a labelSelector that is used in combination with Selector
+                              to allow advanced filtering of objects being synced to host cluster
+                            type: string
                           selector:
                             additionalProperties:
                               type: string
@@ -5600,6 +5660,11 @@ spec:
                             default: true
                             description: Enabled is an on/off switch for syncing resources.
                             type: boolean
+                          filterRule:
+                            description: |-
+                              filterRule specifies a labelSelector that is used in combination with Selector
+                              to allow advanced filtering of objects being synced to host cluster
+                            type: string
                           selector:
                             additionalProperties:
                               type: string
@@ -5619,6 +5684,11 @@ spec:
                             default: false
                             description: Enabled is an on/off switch for syncing resources.
                             type: boolean
+                          filterRule:
+                            description: |-
+                              filterRule specifies a labelSelector that is used in combination with Selector
+                              to allow advanced filtering of objects being synced to host cluster
+                            type: string
                           selector:
                             additionalProperties:
                               type: string

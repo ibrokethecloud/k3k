@@ -26,6 +26,7 @@ const (
 
 type ServiceReconciler struct {
 	*SyncerContext
+	SyncConfig v1beta1.ServiceSyncConfig
 }
 
 // AddServiceSyncer adds service syncer controller to the manager of the virtual cluster
@@ -46,6 +47,22 @@ func AddServiceSyncer(ctx context.Context, virtMgr, hostMgr manager.Manager, clu
 	}
 
 	name := reconciler.Translator.TranslateName(clusterNamespace, serviceControllerName)
+
+	var cluster v1beta1.Cluster
+
+	if err := reconciler.HostClient.Get(ctx, types.NamespacedName{Name: reconciler.ClusterName, Namespace: reconciler.ClusterNamespace}, &cluster); err != nil {
+		return err
+	}
+
+	reconciler.SyncConfig = cluster.Spec.Sync.Services
+
+	// GenerateLabelSelector will generate a label selector based on the sync config and filter
+	labelSelector, err := GenerateLabelSelector(reconciler.SyncConfig.Selector, reconciler.SyncConfig.FilterRule)
+	if err != nil {
+		return err
+	}
+
+	reconciler.LabelSelector = labelSelector
 
 	return ctrl.NewControllerManagedBy(virtMgr).
 		Named(name).
@@ -121,23 +138,14 @@ func (r *ServiceReconciler) Reconcile(ctx context.Context, req reconcile.Request
 }
 
 func (r *ServiceReconciler) filterResources(object ctrlruntimeclient.Object) bool {
-	var cluster v1beta1.Cluster
-
-	ctx := context.Background()
-
-	if err := r.HostClient.Get(ctx, types.NamespacedName{Name: r.ClusterName, Namespace: r.ClusterNamespace}, &cluster); err != nil {
-		return false
-	}
-
-	// check for serviceSyncConfig
-	syncConfig := cluster.Spec.Sync.Services
+	syncConfig := r.SyncConfig
 
 	// If syncing is disabled, only process deletions to allow for cleanup.
 	if !syncConfig.Enabled {
 		return object.GetDeletionTimestamp() != nil
 	}
 
-	labelSelector := labels.SelectorFromSet(syncConfig.Selector)
+	labelSelector := r.LabelSelector
 	if labelSelector.Empty() {
 		return true
 	}

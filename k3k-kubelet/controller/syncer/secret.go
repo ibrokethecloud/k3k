@@ -27,6 +27,7 @@ const (
 type SecretSyncer struct {
 	// SyncerContext contains all client information for host and virtual cluster
 	*SyncerContext
+	SyncConfig v1beta1.SecretSyncConfig
 }
 
 func (s *SecretSyncer) Name() string {
@@ -50,6 +51,22 @@ func AddSecretSyncer(ctx context.Context, virtMgr, hostMgr manager.Manager, clus
 
 	name := reconciler.Translator.TranslateName(clusterNamespace, secretControllerName)
 
+	var cluster v1beta1.Cluster
+
+	if err := reconciler.HostClient.Get(ctx, types.NamespacedName{Name: reconciler.ClusterName, Namespace: reconciler.ClusterNamespace}, &cluster); err != nil {
+		return err
+	}
+
+	reconciler.SyncConfig = cluster.Spec.Sync.Secrets
+
+	// GenerateLabelSelector will generate a label selector based on the sync config and filter
+	labelSelector, err := GenerateLabelSelector(reconciler.SyncConfig.Selector, reconciler.SyncConfig.FilterRule)
+	if err != nil {
+		return err
+	}
+
+	reconciler.LabelSelector = labelSelector
+
 	return ctrl.NewControllerManagedBy(virtMgr).
 		Named(name).
 		For(&corev1.Secret{}).WithEventFilter(predicate.NewPredicateFuncs(reconciler.filterResources)).
@@ -57,23 +74,14 @@ func AddSecretSyncer(ctx context.Context, virtMgr, hostMgr manager.Manager, clus
 }
 
 func (r *SecretSyncer) filterResources(object client.Object) bool {
-	var cluster v1beta1.Cluster
-
-	ctx := context.Background()
-
-	if err := r.HostClient.Get(ctx, types.NamespacedName{Name: r.ClusterName, Namespace: r.ClusterNamespace}, &cluster); err != nil {
-		return false
-	}
-
-	// check for Secrets Sync Config
-	syncConfig := cluster.Spec.Sync.Secrets
+	syncConfig := r.SyncConfig
 
 	// If syncing is disabled, only process deletions to allow for cleanup.
 	if !syncConfig.Enabled {
 		return object.GetDeletionTimestamp() != nil
 	}
 
-	labelSelector := labels.SelectorFromSet(syncConfig.Selector)
+	labelSelector := r.LabelSelector
 	if labelSelector.Empty() {
 		return true
 	}

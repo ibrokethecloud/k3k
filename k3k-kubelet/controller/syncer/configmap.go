@@ -27,6 +27,7 @@ const (
 type ConfigMapSyncer struct {
 	// SyncerContext contains all client information for host and virtual cluster
 	*SyncerContext
+	SyncConfig v1beta1.ConfigMapSyncConfig
 }
 
 func (c *ConfigMapSyncer) Name() string {
@@ -50,6 +51,22 @@ func AddConfigMapSyncer(ctx context.Context, virtMgr, hostMgr manager.Manager, c
 
 	name := reconciler.Translator.TranslateName(clusterNamespace, configMapControllerName)
 
+	var cluster v1beta1.Cluster
+
+	if err := reconciler.HostClient.Get(ctx, types.NamespacedName{Name: reconciler.ClusterName, Namespace: reconciler.ClusterNamespace}, &cluster); err != nil {
+		return err
+	}
+
+	reconciler.SyncConfig = cluster.Spec.Sync.ConfigMaps
+
+	// GenerateLabelSelector will generate a label selector based on the sync config and filter
+	labelSelector, err := GenerateLabelSelector(reconciler.SyncConfig.Selector, reconciler.SyncConfig.FilterRule)
+	if err != nil {
+		return err
+	}
+
+	reconciler.LabelSelector = labelSelector
+
 	return ctrl.NewControllerManagedBy(virtMgr).
 		Named(name).
 		For(&corev1.ConfigMap{}).WithEventFilter(predicate.NewPredicateFuncs(reconciler.filterResources)).
@@ -57,23 +74,14 @@ func AddConfigMapSyncer(ctx context.Context, virtMgr, hostMgr manager.Manager, c
 }
 
 func (c *ConfigMapSyncer) filterResources(object client.Object) bool {
-	var cluster v1beta1.Cluster
-
-	ctx := context.Background()
-
-	if err := c.HostClient.Get(ctx, types.NamespacedName{Name: c.ClusterName, Namespace: c.ClusterNamespace}, &cluster); err != nil {
-		return false
-	}
-
-	// check for configMap Sync Config
-	syncConfig := cluster.Spec.Sync.ConfigMaps
+	syncConfig := c.SyncConfig
 
 	// If syncing is disabled, only process deletions to allow for cleanup.
 	if !syncConfig.Enabled {
 		return object.GetDeletionTimestamp() != nil
 	}
 
-	labelSelector := labels.SelectorFromSet(syncConfig.Selector)
+	labelSelector := c.LabelSelector
 	if labelSelector.Empty() {
 		return true
 	}

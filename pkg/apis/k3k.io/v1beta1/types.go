@@ -325,6 +325,12 @@ type SecretSyncConfig struct {
 	//
 	// +optional
 	Selector map[string]string `json:"selector,omitempty"`
+
+	// filterRule specifies a labelSelector that is used in combination with Selector
+	// to allow advanced filtering of objects being synced to host cluster
+	//
+	// +optional
+	FilterRule string `json:"filterRule,omitempty"`
 }
 
 // ServiceSyncConfig specifies the sync options for Services.
@@ -340,6 +346,12 @@ type ServiceSyncConfig struct {
 	//
 	// +optional
 	Selector map[string]string `json:"selector,omitempty"`
+
+	// filterRule specifies a labelSelector that is used in combination with Selector
+	// to allow advanced filtering of objects being synced to host cluster
+	//
+	// +optional
+	FilterRule string `json:"filterRule,omitempty"`
 }
 
 // ConfigMapSyncConfig specifies the sync options for ConfigMaps.
@@ -355,6 +367,12 @@ type ConfigMapSyncConfig struct {
 	//
 	// +optional
 	Selector map[string]string `json:"selector,omitempty"`
+
+	// filterRule specifies a labelSelector that is used in combination with Selector
+	// to allow advanced filtering of objects being synced to host cluster
+	//
+	// +optional
+	FilterRule string `json:"filterRule,omitempty"`
 }
 
 // IngressSyncConfig specifies the sync options for Ingresses.
@@ -370,6 +388,12 @@ type IngressSyncConfig struct {
 	//
 	// +optional
 	Selector map[string]string `json:"selector,omitempty"`
+
+	// filterRule specifies a labelSelector that is used in combination with Selector
+	// to allow advanced filtering of objects being synced to host cluster
+	//
+	// +optional
+	FilterRule string `json:"filterRule,omitempty"`
 
 	// DisableTLSSecretTranslation is an on/off switch for translating TLS secrets
 	// from virtual cluster to host cluster
@@ -392,6 +416,12 @@ type PersistentVolumeClaimSyncConfig struct {
 	//
 	// +optional
 	Selector map[string]string `json:"selector,omitempty"`
+
+	// filterRule specifies a labelSelector that is used in combination with Selector
+	// to allow advanced filtering of objects being synced to host cluster
+	//
+	// +optional
+	FilterRule string `json:"filterRule,omitempty"`
 }
 
 // PriorityClassSyncConfig specifies the sync options for PriorityClasses.
@@ -407,6 +437,12 @@ type PriorityClassSyncConfig struct {
 	//
 	// +optional
 	Selector map[string]string `json:"selector,omitempty"`
+
+	// filterRule specifies a labelSelector that is used in combination with Selector
+	// to allow advanced filtering of objects being synced to host cluster
+	//
+	// +optional
+	FilterRule string `json:"filterRule,omitempty"`
 }
 
 // StorageClassSyncConfig specifies the sync options for StorageClasses.
@@ -422,6 +458,12 @@ type StorageClassSyncConfig struct {
 	//
 	// +optional
 	Selector map[string]string `json:"selector,omitempty"`
+
+	// filterRule specifies a labelSelector that is used in combination with Selector
+	// to allow advanced filtering of objects being synced to host cluster
+	//
+	// +optional
+	FilterRule string `json:"filterRule,omitempty"`
 }
 
 // ClusterMode is the possible provisioning mode of a Cluster.

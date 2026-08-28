@@ -30,6 +30,7 @@ const (
 
 type PriorityClassSyncer struct {
 	*SyncerContext
+	SyncConfig v1beta1.PriorityClassSyncConfig
 }
 
 // AddPriorityClassSyncer adds a PriorityClass reconciler to k3k-kubelet
@@ -49,6 +50,22 @@ func AddPriorityClassSyncer(ctx context.Context, virtMgr, hostMgr manager.Manage
 	}
 
 	name := reconciler.Translator.TranslateName(clusterNamespace, priorityClassControllerName)
+
+	var cluster v1beta1.Cluster
+
+	if err := reconciler.HostClient.Get(ctx, types.NamespacedName{Name: reconciler.ClusterName, Namespace: reconciler.ClusterNamespace}, &cluster); err != nil {
+		return err
+	}
+
+	reconciler.SyncConfig = cluster.Spec.Sync.PriorityClasses
+
+	// GenerateLabelSelector will generate a label selector based on the sync config and filter
+	labelSelector, err := GenerateLabelSelector(reconciler.SyncConfig.Selector, reconciler.SyncConfig.FilterRule)
+	if err != nil {
+		return err
+	}
+
+	reconciler.LabelSelector = labelSelector
 
 	return ctrl.NewControllerManagedBy(virtMgr).
 		Named(name).
@@ -74,23 +91,13 @@ var ignoreSystemPrefixPredicate = predicate.Funcs{
 }
 
 func (r *PriorityClassSyncer) filterResources(object ctrlruntimeclient.Object) bool {
-	var cluster v1beta1.Cluster
-
-	ctx := context.Background()
-
-	if err := r.HostClient.Get(ctx, types.NamespacedName{Name: r.ClusterName, Namespace: r.ClusterNamespace}, &cluster); err != nil {
-		return false
-	}
-
-	// check for priorityClassConfig
-	syncConfig := cluster.Spec.Sync.PriorityClasses
-
+	syncConfig := r.SyncConfig
 	// If syncing is disabled, only process deletions to allow for cleanup.
 	if !syncConfig.Enabled {
 		return object.GetDeletionTimestamp() != nil
 	}
 
-	labelSelector := labels.SelectorFromSet(syncConfig.Selector)
+	labelSelector := r.LabelSelector
 	if labelSelector.Empty() {
 		return true
 	}
